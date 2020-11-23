@@ -3,7 +3,7 @@
 const assert = require('assert');
 
 class Statement {
-  constructor(sql, params) {
+  constructor (sql, params) {
     this._sql = sql || '';
     this._params = params || [];
   }
@@ -21,7 +21,7 @@ class Statement {
     }
     return this;
   }
-  
+
   pack() {
     return [this._sql, this._params];
   }
@@ -47,8 +47,8 @@ class Statement {
 }
 
 /**
- * @param {string[]} strings 
- * @param  {...any} params 
+ * @param {string[]} strings
+ * @param  {...any} params
  */
 exports = module.exports = function (strings, ...args) {
   if (args.length == 0) {
@@ -84,8 +84,8 @@ exports.set = (values) => {
   const keys = Object.keys(values);
   assert(keys.length > 0);
   return new Statement(
-    keys.map(k => (k + '=?')).join(', '),
-    keys.map(k => values[k])
+      keys.map(k => (k + '=?')).join(', '),
+      keys.map(k => values[k])
   );
 };
 
@@ -94,8 +94,8 @@ exports.values = (values) => {
   const keys = Object.keys(values);
   assert(keys.length > 0);
   return new Statement(
-    `(${keys.join(', ')}) values (${keys.map(() => '?').join(', ')})`,
-    keys.map(k => values[k])
+      `(${keys.join(', ')}) values (${keys.map(() => '?').join(', ')})`,
+      keys.map(k => values[k])
   );
 };
 
@@ -105,18 +105,18 @@ exports.where = (values) => {
   assert(keys.length > 0);
 
   let where_values = [];
-  let where_names =  keys.map(k => {
+  let where_names = keys.map(k => {
     if (Array.isArray(values[k])) {
       if (values[k].length === 2) {
-        values.push(values[k][1]);
-        return (k + values[k][0] + '?');
+        where_values.push(values[k][1]);
+        return k + values[k][0] + '?';
       } else {
         return "";
       }
     }
 
-    values.push(values[k]);
-    return (k + '=?')
+    where_values.push(values[k]);
+    return k + '=?';
   }).filter(item => item.length > 0).join(', ')
 
   return new Statement(
