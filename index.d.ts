@@ -26,7 +26,7 @@ declare namespace SQLStringTemplate {
   function set(values: object): Statement;
   function values(values: object): Statement;
   function join(values: any[]): Statement;
-  function echo(values: any[]): Statement;
+  function echo(values: string): Statement;
   function where(values: any[]): Statement;
 }
 
