@@ -105,22 +105,31 @@ exports.where = (values) => {
   assert(keys.length > 0);
 
   let where_values = [];
-  let where_names = keys.map(k => {
+  let where_names = [];
+  keys.forEach(k => {
     if (Array.isArray(values[k])) {
       if (values[k].length === 2) {
-        where_values.push(values[k][1]);
-        return k + values[k][0] + '?';
-      } else {
-        return "";
-      }
-    }
+        if (Array.isArray(values[k][1])) {
+          let params = [];
+          values[k][1].forEach(val => {
+            where_values.push(val);
+            params.push('?')
+          });
 
-    where_values.push(values[k]);
-    return k + '=?';
-  }).filter(item => item.length > 0).join(', ')
+          where_names.push(`${k} ${values[k][0]} (${params.join(', ')})`);
+        } else {
+          where_values.push(values[k][1]);
+          where_names.push(k + values[k][0] + '?');
+        }
+      }
+    } else {
+      where_values.push(values[k]);
+      where_names.push(k + '=?');
+    }
+  });
 
   return new Statement(
-      where_names,
+      where_names.join(' and '),
       where_values
   );
 };
