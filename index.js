@@ -99,6 +99,32 @@ exports.values = (values) => {
   );
 };
 
+exports.where = (values) => {
+  assert(typeof values == 'object' && values !== null);
+  const keys = Object.keys(values);
+  assert(keys.length > 0);
+
+  let where_values = [];
+  let where_names =  keys.map(k => {
+    if (Array.isArray(values[k])) {
+      if (values[k].length === 2) {
+        values.push(values[k][1]);
+        return (k + values[k][0] + '?');
+      } else {
+        return "";
+      }
+    }
+
+    values.push(values[k]);
+    return (k + '=?')
+  }).filter(item => item.length > 0).join(', ')
+
+  return new Statement(
+      where_names,
+      where_values
+  );
+};
+
 exports.echo = (values) => {
   assert(values === values.toString());
   return new Statement(values);
