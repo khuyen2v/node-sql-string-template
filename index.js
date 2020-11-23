@@ -99,6 +99,11 @@ exports.values = (values) => {
   );
 };
 
+exports.echo = (values) => {
+  assert(values === values.toString());
+  return new Statement(values);
+};
+
 exports.join = (values) => {
   assert(Array.isArray(values));
   return new Statement(values.map(() => '?').join(', '), [...values]);
